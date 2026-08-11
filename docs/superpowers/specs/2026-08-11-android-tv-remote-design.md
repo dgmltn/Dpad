@@ -87,8 +87,10 @@ Feature modules depend on `:domain` and `:design`, never on `:data` or `:protoco
 1. TLS connect (trust-all), capture server cert.
 2. `PairingRequest` → `PairingRequestAck`; `PairingOption` (hex encoding, 6 symbols);
    `PairingConfiguration` → TV displays a 6-character code.
-3. User enters the code. Client computes SHA-256 over client-cert modulus + exponent +
-   server-cert modulus + exponent + code prefix bytes; sends `PairingSecret`.
+3. User enters the 6-hex-char code. The last 4 chars are a nonce; the first 2 are a check
+   byte. Client computes SHA-256 over client-cert modulus + exponent + server-cert modulus +
+   exponent + nonce bytes, verifies the hash's first byte matches the check byte, and sends
+   the hash as `PairingSecret`.
 4. On `PairingSecretAck` the TV trusts the client cert permanently. Persist the device.
 
 Wrong code or timeout restarts the flow with a user-facing message.
