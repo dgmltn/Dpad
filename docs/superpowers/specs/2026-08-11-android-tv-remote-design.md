@@ -30,8 +30,9 @@ TLS) directly — no Google services, no cloud.
 ### Shortcuts
 
 - Configured from a **curated catalog** of popular apps with known app-link URLs (Netflix,
-  YouTube, Prime Video, Disney+, Max, Plex, Jellyfin, Spotify, Twitch — an extendable constant
-  list in `:domain`) **plus custom entries** (user-entered name + app-link URL).
+  YouTube, Prime Video, Disney+, Max, Peacock, Paramount+, Plex, Jellyfin, Spotify, Twitch —
+  an extendable constant list in `:domain`) **plus custom entries** (user-entered name +
+  app-link URL).
 - Launching uses the protocol's `RemoteAppLinkLaunchRequest(app_link_url)`; the protocol offers
   no way to enumerate apps installed on the TV, hence the catalog approach.
 - Shortcuts are reorderable and deletable in an editor screen.
@@ -137,8 +138,10 @@ the data is a handful of small records and Room would be overkill.
 
 ### Remote screen (root)
 
-- Top bar: device name + connection-state dot (tap → device switcher), keyboard icon
-  (tap → text-input sheet), power button.
+- Full-screen, edge-to-edge, no app bar: content draws behind the system bars for a clean
+  remote-hardware look. A transparent overlay row at the top holds the device name +
+  connection-state dot (tap → device switcher), keyboard icon (tap → text-input sheet), and
+  power button.
 - Center: circular d-pad dominating the screen.
 - Rows below: back / home; volume down / mute / volume up; rewind / play-pause / fast-forward.
 - Bottom: shortcut row (user's shortcuts + edit affordance → shortcut editor).
