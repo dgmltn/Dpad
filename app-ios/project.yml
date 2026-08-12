@@ -1,0 +1,37 @@
+name: DpadApp
+options:
+  bundleIdPrefix: com.dgmltn.dpad
+  deploymentTarget:
+    iOS: "17.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    ENABLE_BITCODE: "NO"
+
+targets:
+  DpadApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Sources
+    info:
+      path: Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dgmltn.dpad
+        PRODUCT_NAME: DpadApp
+    # Builds :app-ios-shared's DpadShared.framework via the Kotlin Multiplatform Gradle plugin's
+    # standard `embedAndSignAppleFrameworkForXcode` task and copies/codesigns it into the app
+    # bundle. This task reads Xcode's own env (CONFIGURATION, SDK_NAME, ARCHS, ...) so no separate
+    # per-config wiring is needed here. `basedOnDependencyAnalysis: false` forces this script to
+    # run on every build — Xcode can't see into the Gradle dependency graph to know when Kotlin
+    # sources changed.
+    preBuildScripts:
+      - name: "Compile Kotlin Framework (:app-ios-shared)"
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :app-ios-shared:embedAndSignAppleFrameworkForXcode
+        basedOnDependencyAnalysis: false

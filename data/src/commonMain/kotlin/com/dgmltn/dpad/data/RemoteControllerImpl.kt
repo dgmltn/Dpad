@@ -1,5 +1,6 @@
 package com.dgmltn.dpad.data
 
+import com.dgmltn.dpad.data.mapping.charToKeyCodes
 import com.dgmltn.dpad.data.mapping.toDomain
 import com.dgmltn.dpad.data.mapping.toKeyCode
 import com.dgmltn.dpad.data.resolve.HostResolver
@@ -74,8 +75,6 @@ class RemoteControllerImpl(
     override fun press(key: RemoteKey) { session?.sendKey(key.toKeyCode()) }
     override fun launchApp(appLinkUrl: String) { session?.launchApp(appLinkUrl) }
     override fun sendText(text: String) {
-        // Per-character key events: map ASCII to KEYCODE_* is out of scope for Plan 2's protocol surface;
-        // Plan 3 wires the text-input sheet. For now, forward nothing here — RemoteSession has no text API yet.
-        // (Documented gap: text input is delivered in Plan 3 alongside the UI that produces it.)
+        text.forEach { ch -> charToKeyCodes(ch).forEach { session?.sendKey(it) } }
     }
 }

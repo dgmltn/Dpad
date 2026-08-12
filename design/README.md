@@ -1,0 +1,1 @@
+Design system: `DpadTheme` + reusable remote-control primitives (`DirectionalPad`, `RemoteIconButton`, `ShortcutChip`). Compose Multiplatform. Depends on Compose only — no `:domain`/`:data`/`:protocol`.
