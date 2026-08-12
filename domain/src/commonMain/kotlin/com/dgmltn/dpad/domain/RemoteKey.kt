@@ -1,0 +1,7 @@
+package com.dgmltn.dpad.domain
+
+enum class RemoteKey {
+    DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT, DPAD_CENTER,
+    BACK, HOME, VOLUME_UP, VOLUME_DOWN, MUTE,
+    MEDIA_PLAY_PAUSE, MEDIA_REWIND, MEDIA_FAST_FORWARD, POWER,
+}

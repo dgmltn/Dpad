@@ -6,3 +6,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Dpad"
 include(":protocol")
+include(":domain")
+include(":data")

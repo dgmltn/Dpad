@@ -18,3 +18,7 @@ echo "kotlinx-coroutines    = $(central org/jetbrains/kotlinx kotlinx-coroutines
 echo "kermit                = $(central co/touchlab kermit)"
 echo "bcpkix                = $(central org/bouncycastle bcpkix-jdk18on)"
 echo "turbine               = $(central app/cash/turbine turbine)"
+echo "kotlinx-serialization  = $(central org/jetbrains/kotlinx kotlinx-serialization-json)"
+echo "datastore-preferences  = $(central androidx/datastore datastore-preferences-core)"
+echo "okio                   = $(central com/squareup/okio okio)"
+echo "koin                   = $(central io/insert-koin koin-core)"
