@@ -154,6 +154,7 @@ fun RemoteContent(
                         icon = Icons.AutoMirrored.Filled.VolumeDown,
                         contentDescription = "Volume down",
                         onClick = { onKey(RemoteKey.VOLUME_DOWN) },
+                        repeat = true,
                     )
                     RemoteIconButton(
                         icon = if (state.volume?.muted == true) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
@@ -164,6 +165,7 @@ fun RemoteContent(
                         icon = Icons.AutoMirrored.Filled.VolumeUp,
                         contentDescription = "Volume up",
                         onClick = { onKey(RemoteKey.VOLUME_UP) },
+                        repeat = true,
                     )
                 }
 

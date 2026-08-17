@@ -11,16 +11,14 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -38,8 +36,6 @@ fun DirectionalPad(
     onCenter: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val haptics = LocalHapticFeedback.current
-
     Box(
         modifier = modifier
             .size(PadSize)
@@ -49,46 +45,31 @@ fun DirectionalPad(
         DpadArrowButton(
             icon = Icons.Filled.KeyboardArrowUp,
             contentDescription = "Up",
-            onClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                onDirection(DpadDirection.UP)
-            },
+            onPress = { onDirection(DpadDirection.UP) },
             modifier = Modifier.align(Alignment.TopCenter).padding(top = EdgeInset),
         )
         DpadArrowButton(
             icon = Icons.Filled.KeyboardArrowDown,
             contentDescription = "Down",
-            onClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                onDirection(DpadDirection.DOWN)
-            },
+            onPress = { onDirection(DpadDirection.DOWN) },
             modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = EdgeInset),
         )
         DpadArrowButton(
             icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
             contentDescription = "Left",
-            onClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                onDirection(DpadDirection.LEFT)
-            },
+            onPress = { onDirection(DpadDirection.LEFT) },
             modifier = Modifier.align(Alignment.CenterStart).padding(start = EdgeInset),
         )
         DpadArrowButton(
             icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "Right",
-            onClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                onDirection(DpadDirection.RIGHT)
-            },
+            onPress = { onDirection(DpadDirection.RIGHT) },
             modifier = Modifier.align(Alignment.CenterEnd).padding(end = EdgeInset),
         )
 
+        // Center OK: fire on down, no repeat.
         Surface(
-            onClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                onCenter()
-            },
-            modifier = Modifier.size(CenterButtonSize),
+            modifier = Modifier.size(CenterButtonSize).pressAndHold(onPress = onCenter),
             shape = CircleShape,
             color = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -100,14 +81,21 @@ fun DirectionalPad(
     }
 }
 
+/** A d-pad arrow: fires on down and auto-repeats while held (hold to keep moving the cursor). */
 @Composable
 private fun DpadArrowButton(
     icon: ImageVector,
     contentDescription: String,
-    onClick: () -> Unit,
+    onPress: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    IconButton(onClick = onClick, modifier = modifier) {
+    Box(
+        modifier = modifier
+            .size(48.dp)
+            .clip(CircleShape)
+            .pressAndHold(repeat = true, onPress = onPress),
+        contentAlignment = Alignment.Center,
+    ) {
         Icon(
             imageVector = icon,
             contentDescription = contentDescription,
