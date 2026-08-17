@@ -3,7 +3,7 @@ package com.dgmltn.dpad.data
 import com.dgmltn.dpad.data.mapping.charToKeyCodes
 import com.dgmltn.dpad.data.mapping.toDomain
 import com.dgmltn.dpad.data.mapping.toKeyCode
-import com.dgmltn.dpad.data.resolve.HostResolver
+import com.dgmltn.dpad.data.resolve.resolveHostForAttempt
 import com.dgmltn.dpad.domain.*
 import com.dgmltn.dpad.protocol.session.RemoteSession
 import com.dgmltn.dpad.protocol.transport.TlsSocketFactory
@@ -46,10 +46,18 @@ class RemoteControllerImpl(
         disconnect()
         connectJob = scope.launch {
             val identity = identityStore.protocolIdentity()
+            // Attempt 0 uses the stored IP immediately (instant reconnect when the TV kept its
+            // address); mDNS is consulted only on retries, and only briefly. See resolveHostForAttempt.
+            var attempt = 0
             val s = RemoteSession(
                 scope = scope,
                 factory = TlsSocketFactory(identity),
-                resolveHost = { HostResolver.resolve(device, discovery.discovered().first()) },
+                resolveHost = {
+                    resolveHostForAttempt(attempt, device, { discovery.discovered().first() })
+                        .also { attempt++ }
+                },
+                // Snappier wake-reconnects than the protocol default (max 15s): cap the backoff at 4s.
+                backoffMillis = listOf(500L, 1_000L, 2_000L, 4_000L),
             )
             session = s
             collectorJobs = listOf(
