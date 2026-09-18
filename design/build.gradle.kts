@@ -28,5 +28,9 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.compose.ui.tooling.preview)
         }
+        androidMain.dependencies {
+            // ComposeViewAdapter for Android Studio's @Preview renderer; Android-only.
+            implementation(libs.compose.ui.tooling)
+        }
     }
 }

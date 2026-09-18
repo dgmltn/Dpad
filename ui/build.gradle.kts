@@ -39,6 +39,10 @@ kotlin {
             implementation(libs.navigation3.ui)
             implementation(libs.kotlinx.collections.immutable)
         }
+        androidMain.dependencies {
+            // ComposeViewAdapter for Android Studio's @Preview renderer; Android-only.
+            implementation(libs.compose.ui.tooling)
+        }
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)
