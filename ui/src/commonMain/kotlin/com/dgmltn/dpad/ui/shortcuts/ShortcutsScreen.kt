@@ -16,14 +16,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dgmltn.dpad.design.DpadIcon
 import com.dgmltn.dpad.design.DpadTheme
 import com.dgmltn.dpad.domain.CatalogApp
 import com.dgmltn.dpad.domain.Shortcut
@@ -152,8 +146,8 @@ private fun ShortcutsTopBar(onBack: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         IconButton(onClick = onBack) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            DpadIcon(
+                icon = DpadIcon.Back,
                 contentDescription = "Back",
                 tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(24.dp),
@@ -212,22 +206,22 @@ fun ShortcutEditRow(
                 .padding(horizontal = 8.dp),
         )
         IconButton(onClick = onMoveUp, enabled = canMoveUp) {
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowUp,
+            DpadIcon(
+                icon = DpadIcon.ChevronUp,
                 contentDescription = "Move up",
                 modifier = Modifier.size(24.dp),
             )
         }
         IconButton(onClick = onMoveDown, enabled = canMoveDown) {
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowDown,
+            DpadIcon(
+                icon = DpadIcon.ChevronDown,
                 contentDescription = "Move down",
                 modifier = Modifier.size(24.dp),
             )
         }
         IconButton(onClick = onRemove) {
-            Icon(
-                imageVector = Icons.Filled.Delete,
+            DpadIcon(
+                icon = DpadIcon.Delete,
                 contentDescription = "Remove",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(24.dp),
@@ -256,8 +250,8 @@ fun CatalogAppRow(
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.weight(1f),
         )
-        Icon(
-            imageVector = Icons.Filled.Add,
+        DpadIcon(
+            icon = DpadIcon.Add,
             contentDescription = "Add",
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(24.dp),
@@ -275,8 +269,8 @@ private fun AddCustomRow(onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Icon(
-            imageVector = Icons.Filled.Add,
+        DpadIcon(
+            icon = DpadIcon.Add,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(24.dp),

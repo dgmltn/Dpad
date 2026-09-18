@@ -21,20 +21,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.automirrored.filled.VolumeDown
-import androidx.compose.material.icons.automirrored.filled.VolumeOff
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FastForward
-import androidx.compose.material.icons.filled.FastRewind
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Keyboard
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.PowerSettingsNew
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -55,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.dgmltn.dpad.design.DirectionalPad
 import com.dgmltn.dpad.design.DpadDirection
+import com.dgmltn.dpad.design.DpadIcon
 import com.dgmltn.dpad.design.DpadTheme
 import com.dgmltn.dpad.design.RemoteIconButton
 import com.dgmltn.dpad.design.ShortcutChip
@@ -142,12 +129,12 @@ fun RemoteContent(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                     RemoteIconButton(
-                        icon = Icons.AutoMirrored.Filled.ArrowBack,
+                        icon = DpadIcon.Back,
                         contentDescription = "Back",
                         onClick = { onKey(RemoteKey.BACK) },
                     )
                     RemoteIconButton(
-                        icon = Icons.Filled.Home,
+                        icon = DpadIcon.Home,
                         contentDescription = "Home",
                         onClick = { onKey(RemoteKey.HOME) },
                     )
@@ -160,18 +147,18 @@ fun RemoteContent(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     RemoteIconButton(
-                        icon = Icons.AutoMirrored.Filled.VolumeDown,
+                        icon = DpadIcon.VolumeDown,
                         contentDescription = "Volume down",
                         onClick = { onKey(RemoteKey.VOLUME_DOWN) },
                         repeat = true,
                     )
                     RemoteIconButton(
-                        icon = if (state.volume?.muted == true) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
+                        icon = if (state.volume?.muted == true) DpadIcon.VolumeOff else DpadIcon.VolumeUp,
                         contentDescription = if (state.volume?.muted == true) "Unmute" else "Mute",
                         onClick = { onKey(RemoteKey.MUTE) },
                     )
                     RemoteIconButton(
-                        icon = Icons.AutoMirrored.Filled.VolumeUp,
+                        icon = DpadIcon.VolumeUp,
                         contentDescription = "Volume up",
                         onClick = { onKey(RemoteKey.VOLUME_UP) },
                         repeat = true,
@@ -191,17 +178,17 @@ fun RemoteContent(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                     RemoteIconButton(
-                        icon = Icons.Filled.FastRewind,
+                        icon = DpadIcon.Rewind,
                         contentDescription = "Rewind",
                         onClick = { onKey(RemoteKey.MEDIA_REWIND) },
                     )
                     RemoteIconButton(
-                        icon = Icons.Filled.PlayArrow,
+                        icon = DpadIcon.Play,
                         contentDescription = "Play/pause",
                         onClick = { onKey(RemoteKey.MEDIA_PLAY_PAUSE) },
                     )
                     RemoteIconButton(
-                        icon = Icons.Filled.FastForward,
+                        icon = DpadIcon.FastForward,
                         contentDescription = "Fast forward",
                         onClick = { onKey(RemoteKey.MEDIA_FAST_FORWARD) },
                     )
@@ -261,15 +248,15 @@ private fun TopBar(
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             IconButton(onClick = onKeyboardClick) {
-                Icon(
-                    imageVector = Icons.Filled.Keyboard,
+                DpadIcon(
+                    icon = DpadIcon.Keyboard,
                     contentDescription = "Text input",
                     tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(24.dp),
                 )
             }
             RemoteIconButton(
-                icon = Icons.Filled.PowerSettingsNew,
+                icon = DpadIcon.Power,
                 contentDescription = if (tvOff) "Turn TV on" else "Power",
                 onClick = onPowerClick,
                 tint = if (tvOff) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.error,
@@ -337,7 +324,7 @@ private fun ShortcutsRow(
             }
         }
         RemoteIconButton(
-            icon = Icons.Filled.Edit,
+            icon = DpadIcon.Edit,
             contentDescription = "Edit shortcuts",
             onClick = onEditShortcuts,
             modifier = Modifier.padding(end = 16.dp),
@@ -368,7 +355,7 @@ private fun TextInputSheet(
                 singleLine = true,
             )
             RemoteIconButton(
-                icon = Icons.AutoMirrored.Filled.Send,
+                icon = DpadIcon.Send,
                 contentDescription = "Send",
                 onClick = {
                     onSend(text)

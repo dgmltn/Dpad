@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -29,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dgmltn.dpad.design.DpadIcon
 import com.dgmltn.dpad.design.DpadTheme
 import com.dgmltn.dpad.domain.PairingFailureReason
 import com.dgmltn.dpad.domain.PairingProgress
@@ -112,8 +110,8 @@ private fun AwaitingCodeContent(
 
 @Composable
 private fun PairedContent() {
-    Icon(
-        imageVector = Icons.Filled.Check,
+    DpadIcon(
+        icon = DpadIcon.Check,
         contentDescription = null,
         tint = MaterialTheme.colorScheme.primary,
         modifier = Modifier.size(24.dp),

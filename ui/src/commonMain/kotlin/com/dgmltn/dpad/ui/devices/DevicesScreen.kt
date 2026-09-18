@@ -15,12 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Tv
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dgmltn.dpad.design.DpadIcon
 import com.dgmltn.dpad.design.DpadTheme
 import com.dgmltn.dpad.domain.DiscoveredDevice
 import com.dgmltn.dpad.domain.PairedDevice
@@ -135,8 +130,8 @@ private fun DevicesTopBar(onBack: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         IconButton(onClick = onBack) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            DpadIcon(
+                icon = DpadIcon.Back,
                 contentDescription = "Back",
                 tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(24.dp),
@@ -199,8 +194,8 @@ fun DeviceRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Icon(
-            imageVector = Icons.Filled.Tv,
+        DpadIcon(
+            icon = DpadIcon.Tv,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(24.dp),
@@ -230,8 +225,8 @@ fun DeviceRow(
             )
         }
         IconButton(onClick = onUnpair) {
-            Icon(
-                imageVector = Icons.Filled.Delete,
+            DpadIcon(
+                icon = DpadIcon.Delete,
                 contentDescription = "Unpair",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(24.dp),
@@ -254,8 +249,8 @@ private fun DiscoveredDeviceRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Icon(
-            imageVector = Icons.Filled.Tv,
+        DpadIcon(
+            icon = DpadIcon.Tv,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(24.dp),
@@ -272,8 +267,8 @@ private fun DiscoveredDeviceRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Icon(
-            imageVector = Icons.Filled.Add,
+        DpadIcon(
+            icon = DpadIcon.Add,
             contentDescription = "Pair",
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(24.dp),

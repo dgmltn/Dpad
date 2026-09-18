@@ -4,10 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.PowerSettingsNew
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -15,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -25,7 +20,7 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun RemoteIconButton(
-    icon: ImageVector,
+    icon: DpadIcon,
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -42,8 +37,8 @@ fun RemoteIconButton(
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Icon(
-                imageVector = icon,
+            DpadIcon(
+                icon = icon,
                 contentDescription = contentDescription,
                 tint = tint,
                 modifier = Modifier.size(24.dp),
@@ -79,7 +74,7 @@ fun ShortcutChip(
 private fun Preview_RemoteIconButton() {
     DpadTheme {
         RemoteIconButton(
-            icon = Icons.Filled.Home,
+            icon = DpadIcon.Home,
             contentDescription = "Home",
             onClick = {},
         )
@@ -91,7 +86,7 @@ private fun Preview_RemoteIconButton() {
 private fun Preview_RemoteIconButton_Tinted() {
     DpadTheme {
         RemoteIconButton(
-            icon = Icons.Filled.PowerSettingsNew,
+            icon = DpadIcon.Power,
             contentDescription = "Power",
             onClick = {},
             tint = MaterialTheme.colorScheme.error,
