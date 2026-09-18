@@ -21,23 +21,19 @@ class RemoteViewModel(
 ) : ViewModel() {
 
     val state: StateFlow<RemoteUiState> = combine(
-        controller.connection,
-        controller.volume,
+        combine(controller.connection, controller.power, controller.volume, ::Triple),
         deviceRepository.devices,
         deviceRepository.lastUsedDeviceId,
         shortcutRepository.shortcuts,
-    ) { connection, volume, devices, lastUsedDeviceId, shortcuts ->
+    ) { (connection, power, volume), devices, lastUsedDeviceId, shortcuts ->
         RemoteUiState(
             deviceName = devices.firstOrNull { it.id == lastUsedDeviceId }?.name,
             connection = connection,
+            power = power,
             volume = volume,
             shortcuts = shortcuts.toImmutableList(),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), RemoteUiState())
-
-    init {
-        onConnectLastUsed()
-    }
 
     fun onKey(key: RemoteKey) {
         controller.press(key)
@@ -51,6 +47,10 @@ class RemoteViewModel(
         controller.sendText(text)
     }
 
+    /**
+     * Called by [RemoteScreen] on every ON_START. Safe to repeat: [RemoteController.connect] is a
+     * no-op for the device it's already targeting.
+     */
     fun onConnectLastUsed() {
         viewModelScope.launch {
             val id = deviceRepository.lastUsedDeviceId.first() ?: return@launch

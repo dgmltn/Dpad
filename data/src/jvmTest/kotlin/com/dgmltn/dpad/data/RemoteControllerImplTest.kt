@@ -8,6 +8,8 @@ import com.dgmltn.dpad.domain.DeviceDiscovery
 import com.dgmltn.dpad.domain.DiscoveredDevice
 import com.dgmltn.dpad.domain.PairedDevice
 import com.dgmltn.dpad.protocol.discovery.MdnsBrowser
+import app.cash.turbine.test
+import com.dgmltn.dpad.domain.RemoteKey
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -36,6 +38,7 @@ class RemoteControllerImplTest {
         controller.disconnect()
         assertEquals(ConnectionState.Disconnected, controller.connection.value)
         assertNull(controller.volume.value)
+        assertNull(controller.power.value)
     }
 
     /**
@@ -81,5 +84,31 @@ class RemoteControllerImplTest {
         // didn't leave connectJob/session in a state that blocks future use.
         controller.disconnect()
         assertEquals(ConnectionState.Disconnected, controller.connection.value)
+    }
+
+    @Test fun alreadyTargetingOnlyForSameDeviceNotAwaitingRepair() {
+        val a = PairedDevice(id = "a", name = "A", host = "10.0.0.1", serviceName = "a")
+        val b = a.copy(id = "b", serviceName = "b")
+        assertFalse(isAlreadyTargeting(current = null, requested = a, state = ConnectionState.Disconnected))
+        // connect() in flight but its session not built yet: state is still Disconnected.
+        assertTrue(isAlreadyTargeting(current = a, requested = a, state = ConnectionState.Disconnected))
+        assertTrue(isAlreadyTargeting(current = a, requested = a, state = ConnectionState.Connecting))
+        assertTrue(isAlreadyTargeting(current = a, requested = a, state = ConnectionState.Connected))
+        assertFalse(isAlreadyTargeting(current = a, requested = a, state = ConnectionState.PairingRequired))
+        assertFalse(isAlreadyTargeting(current = a, requested = b, state = ConnectionState.Connected))
+        // Same TV at a new stored address deserves a fresh session.
+        assertFalse(isAlreadyTargeting(current = a, requested = a.copy(host = "10.0.0.9"), state = ConnectionState.Connected))
+    }
+
+    @Test fun everyCommandEmitsAnInteraction() = runTest {
+        val controller = RemoteControllerImpl(identityStore, discovery, this)
+        controller.interactions.test {
+            controller.press(RemoteKey.HOME)
+            awaitItem()
+            controller.launchApp("https://example.com")
+            awaitItem()
+            controller.sendText("a")
+            awaitItem()
+        }
     }
 }

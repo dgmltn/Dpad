@@ -13,6 +13,9 @@ class RemoteViewModelTest {
         val _vol = MutableStateFlow<Volume?>(null)
         override val connection = _conn.asStateFlow()
         override val volume = _vol.asStateFlow()
+        val _power = MutableStateFlow<TvPower?>(null)
+        override val power = _power.asStateFlow()
+        override val interactions = MutableSharedFlow<Unit>().asSharedFlow()
         val pressed = mutableListOf<RemoteKey>()
         var connectedTo: PairedDevice? = null
         override fun connect(device: PairedDevice) { connectedTo = device; _conn.value = ConnectionState.Connecting }
@@ -67,12 +70,15 @@ class RemoteViewModelTest {
         awaitCondition { controller.connectedTo?.id == "1" }
     }
 
-    @Test fun constructionAloneTriggersConnectToLastUsedDevice() = runTest {
-        val device = PairedDevice(id="1", name="Den", host="10.0.0.4", serviceName="den")
+    @Test fun powerReachesUiState() = runTest {
         val controller = FakeController()
-        // Deliberately NOT calling onConnectLastUsed() — construction (init{}) must trigger it.
-        RemoteViewModel(controller, FakeDeviceRepo(listOf(device), last="1"), FakeShortcutRepo(emptyList()))
-        awaitCondition { controller.connectedTo?.id == "1" }
+        val vm = RemoteViewModel(controller, FakeDeviceRepo(emptyList(), null), FakeShortcutRepo(emptyList()))
+        vm.state.test {
+            controller._conn.value = ConnectionState.Connected
+            controller._power.value = TvPower.OFF
+            val s = awaitItemUntil { it.power == TvPower.OFF }
+            assertEquals(ConnectionState.Connected, s.connection)
+        }
     }
 }
 

@@ -4,7 +4,9 @@ import app.cash.turbine.test
 import com.dgmltn.dpad.domain.*
 import com.dgmltn.dpad.ui.remote.awaitCondition
 import com.dgmltn.dpad.ui.remote.awaitItemUntil
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
@@ -42,6 +44,9 @@ class DevicesViewModelTest {
         val _vol = MutableStateFlow<Volume?>(null)
         override val connection = _conn.asStateFlow()
         override val volume = _vol.asStateFlow()
+        val _power = MutableStateFlow<TvPower?>(null)
+        override val power = _power.asStateFlow()
+        override val interactions = MutableSharedFlow<Unit>().asSharedFlow()
         var connectedTo: PairedDevice? = null
         override fun connect(device: PairedDevice) { connectedTo = device; _conn.value = ConnectionState.Connecting }
         override fun disconnect() { _conn.value = ConnectionState.Disconnected }

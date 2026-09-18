@@ -1,10 +1,14 @@
 package com.dgmltn.dpad.iosshared
 
 import androidx.compose.ui.window.ComposeUIViewController
+import com.dgmltn.dpad.data.AutoDisconnectPolicy
 import com.dgmltn.dpad.data.di.dataModule
 import com.dgmltn.dpad.design.DpadTheme
 import com.dgmltn.dpad.ui.nav.AppNavHost
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.koin.core.context.startKoin
+import org.koin.core.qualifier.named
 import platform.UIKit.UIViewController
 
 /**
@@ -13,9 +17,12 @@ import platform.UIKit.UIViewController
  * Called once from `DpadApp.swift`'s `init`, before any Compose content is created.
  */
 fun startDpadKoin() {
-    startKoin {
+    val koin = startKoin {
         modules(iosPlatformModule, dataModule, uiModule)
-    }
+    }.koin
+    val sessionScope: CoroutineScope = koin.get(named("session"))
+    val policy: AutoDisconnectPolicy = koin.get()
+    sessionScope.launch { policy.run() }
 }
 
 /**

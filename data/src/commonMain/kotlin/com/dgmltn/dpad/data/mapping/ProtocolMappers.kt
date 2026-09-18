@@ -48,3 +48,9 @@ fun PairingEvent.toProgress(): PairingProgress = when (this) {
 }
 
 fun DiscoveredTv.toDomain(): DiscoveredDevice = DiscoveredDevice(name = name, host = host, port = port)
+
+fun Boolean?.toTvPower(): TvPower? = when (this) {
+    true -> TvPower.ON
+    false -> TvPower.OFF
+    null -> null
+}

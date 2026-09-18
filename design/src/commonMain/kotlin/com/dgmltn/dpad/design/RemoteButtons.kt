@@ -30,6 +30,7 @@ fun RemoteIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     tint: Color = Color.Unspecified,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     repeat: Boolean = false,
 ) {
     Surface(
@@ -37,7 +38,7 @@ fun RemoteIconButton(
             .size(48.dp)
             .pressAndHold(repeat = repeat, onPress = onClick),
         shape = RoundedCornerShape(percent = 50),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = containerColor,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
     ) {
         Box(contentAlignment = Alignment.Center) {

@@ -141,6 +141,52 @@ class RemoteSessionTest {
             s.state.test { awaitItemUntil { it == SessionState.PairingRequired } }
         }
     }
+
+    @Test fun tracksPowerFromRemoteStart() = runTest {
+        FakeTvServer(requireClientCert = true).use { server ->
+            server.startSessionServer()
+            val s = session(server, backgroundScope)
+            s.connect()
+            s.state.test { awaitItemUntil { it == SessionState.Connected } }
+            server.sendRemoteStart(false)
+            s.power.test { awaitItemUntil { it == false } }
+            server.sendRemoteStart(true)
+            s.power.test { awaitItemUntil { it == true } }
+        }
+    }
+
+    @Test fun powerResetsToNullOnDropAndOnDisconnect() = runTest {
+        FakeTvServer(requireClientCert = true).use { server ->
+            server.startSessionServer()
+            val s = session(server, backgroundScope)
+            s.connect()
+            s.state.test { awaitItemUntil { it == SessionState.Connected } }
+            server.sendRemoteStart(true)
+            s.power.test {
+                awaitItemUntil { it == true }
+                server.dropConnection()
+                awaitItemUntil { it == null }
+            }
+            s.state.test { awaitItemUntil { it == SessionState.Connected } }   // fake auto-accepts the retry
+            server.sendRemoteStart(false)
+            s.power.test { awaitItemUntil { it == false } }
+            s.disconnect()
+            assertNull(s.power.value)
+        }
+    }
+
+    // The TV may report power before remote_set_active; handshakeReplies used to discard every
+    // message it wasn't waiting for, which would lose the initial report.
+    @Test fun remoteStartDuringHandshakeIsCapturedAndHandshakeCompletes() = runTest {
+        FakeTvServer(requireClientCert = true).use { server ->
+            server.remoteStartDuringHandshake = false
+            server.startSessionServer()
+            val s = session(server, backgroundScope)
+            s.connect()
+            s.state.test { awaitItemUntil { it == SessionState.Connected } }
+            assertEquals(false, s.power.value)
+        }
+    }
 }
 
 /** Awaits items until predicate matches (Room-style condition awaiting, per Doug's test prefs). */

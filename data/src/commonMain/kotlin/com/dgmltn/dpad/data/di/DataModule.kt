@@ -11,6 +11,7 @@ import org.koin.dsl.module
  *   single<DataStore<Preferences>> { ... platform path ... }
  *   single<MdnsBrowser> { ... Context on Android ... }
  *   single<CoroutineScope>(named("session")) { ... single-threaded-confined ... }
+ *   single<StateFlow<Boolean>>(named("appInForeground")) { ... true while the app is visible ... }
  */
 val dataModule = module {
     single<DeviceRepository> { DeviceRepositoryImpl(get()) }
@@ -19,4 +20,5 @@ val dataModule = module {
     single<DeviceDiscovery> { DeviceDiscoveryImpl(get()) }
     factory<DevicePairer> { DevicePairerImpl(get(), get(), get(named("session"))) }
     single<RemoteController> { RemoteControllerImpl(get(), get(), get(named("session"))) }
+    single { AutoDisconnectPolicy(get(), get(named("appInForeground"))) }
 }

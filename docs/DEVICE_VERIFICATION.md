@@ -66,6 +66,29 @@ item only once verified against real hardware — not the simulator/emulator, wh
   - `NSNetService` (Bonjour) discovery finds the same devices as Android's mDNS pass.
   - TLS rejection (e.g. wrong/unpaired device) is detected — coarse handling is
     acceptable, but the app must not hang or crash when the handshake is refused.
+- [ ] **10. Screen-off keep-alive (Android).** Connected, turn the phone screen off for 5+
+  minutes, turn it on → the remote works immediately with no "Connecting…" banner. Before
+  this change, `adb logcat -s Session` showed `session connection lost` at screen-on; it
+  should no longer appear.
+- [ ] **11. Notification controls (Android).** From the shade and from the lock screen:
+  Play/Pause and Mute reach the TV; Disconnect ends the session, removes the notification,
+  and reopening the app reconnects.
+- [ ] **12. TV power state.** Turn the TV off with its own remote → the app shows "TV is off"
+  with a highlighted Power button, and the notification switches to Power + Disconnect.
+  Power turns it back on and the UI returns to normal.
+- [ ] **13. Auto-disconnect (Android).** With the app backgrounded, the screen off, and the
+  phone otherwise untouched, measure the **wall-clock** time to each rule's stop: TV off →
+  ~2 min; TV unplugged → ~2 min; TV on and untouched → ~30 min. (Android's `delay` on the main
+  dispatcher uses uptime, which pauses during deep sleep, so with the screen off these timers
+  may stretch past the stated durations.) If a stop takes much longer than stated, that's the
+  signal to move the timers to a wake-capable clock (e.g. `AlarmManager`
+  `ELAPSED_REALTIME_WAKEUP`) — deliberately deferred until this is measured. With the app
+  visible, none of these disconnect.
+- [ ] **14. `remote_start` survey.** For each TV/streamer, record whether it sends
+  `remote_start` on connect, on power change, and whether it keeps networking in standby.
+  If a device never sends it, the UI must look exactly as before (no TV-off state).
+- [ ] **15. Pings with screen off.** If item 10 fails despite the service running, that's
+  the signal to add a `WifiLock` held only while the TV is on (deliberately left out).
 
 ## Notes
 

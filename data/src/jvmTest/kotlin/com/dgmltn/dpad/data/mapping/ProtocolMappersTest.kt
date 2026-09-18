@@ -42,4 +42,10 @@ class ProtocolMappersTest {
     @Test fun discoveredTvMaps() {
         assertEquals(DiscoveredDevice("Den", "10.0.0.4", 6466), DiscoveredTv("Den", "10.0.0.4", 6466).toDomain())
     }
+
+    @Test fun powerMapsToTvPower() {
+        assertEquals(TvPower.ON, true.toTvPower())
+        assertEquals(TvPower.OFF, false.toTvPower())
+        assertNull((null as Boolean?).toTvPower())
+    }
 }

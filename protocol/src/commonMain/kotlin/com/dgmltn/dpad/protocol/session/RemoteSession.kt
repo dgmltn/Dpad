@@ -79,6 +79,10 @@ class RemoteSession(
     private val _volume = MutableStateFlow<VolumeState?>(null)
     val volume: StateFlow<VolumeState?> = _volume.asStateFlow()
 
+    private val _power = MutableStateFlow<Boolean?>(null)
+    /** TV power as last reported by `remote_start`: true = screen on, false = standby, null = unknown / not connected. */
+    val power: StateFlow<Boolean?> = _power.asStateFlow()
+
     private var loopJob: Job? = null
 
     // The current connection's outbound queue, or null when not Connected. Recreated fresh per
@@ -114,6 +118,7 @@ class RemoteSession(
         loopJob?.cancel()
         loopJob = null
         activeChannel = null
+        _power.value = null
         _state.value = SessionState.Disconnected
     }
 
@@ -139,6 +144,12 @@ class RemoteSession(
     }
 
     private fun isCurrentGeneration(myGeneration: Int) = generation == myGeneration
+
+    /** Records a `remote_start` power report, if [message] carries one, for the current generation only. */
+    private fun recordPower(message: RemoteMessage, myGeneration: Int) {
+        val started = message.remote_start?.started ?: return
+        if (isCurrentGeneration(myGeneration)) _power.value = started
+    }
 
     private suspend fun runLoop(myGeneration: Int) {
         var consecutiveRejections = 0
@@ -197,9 +208,9 @@ class RemoteSession(
                     // directly and concurrently could interleave bytes on the wire; routing
                     // everything through one UNLIMITED channel drained by one coroutine rules
                     // that out structurally instead of relying on a lock.
-                    handshakeReplies(connection, channel)
+                    handshakeReplies(connection, channel, myGeneration)
                     if (isCurrentGeneration(myGeneration)) _state.value = SessionState.Connected
-                    readLoop(connection, channel)
+                    readLoop(connection, channel, myGeneration)
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -212,7 +223,10 @@ class RemoteSession(
                 Logger.d(tag = TAG) { "session connection lost: $e" }
                 if (isCurrentGeneration(myGeneration)) _state.value = SessionState.Connecting
             } finally {
-                if (isCurrentGeneration(myGeneration)) activeChannel = null
+                if (isCurrentGeneration(myGeneration)) {
+                    activeChannel = null
+                    _power.value = null
+                }
                 channel.close()
                 connection.close()
             }
@@ -237,9 +251,10 @@ class RemoteSession(
     }
 
     /** Waits for remote_configure then remote_set_active, queueing a reply to each per the session handshake contract. */
-    private suspend fun handshakeReplies(connection: TlsConnection, channel: Channel<RemoteMessage>) {
+    private suspend fun handshakeReplies(connection: TlsConnection, channel: Channel<RemoteMessage>, myGeneration: Int) {
         while (true) {
             val msg = RemoteMessage.ADAPTER.decode(connection.readFrame())
+            recordPower(msg, myGeneration)
             if (msg.remote_configure != null) {
                 channel.trySend(
                     RemoteMessage(
@@ -261,6 +276,7 @@ class RemoteSession(
         }
         while (true) {
             val msg = RemoteMessage.ADAPTER.decode(connection.readFrame())
+            recordPower(msg, myGeneration)
             if (msg.remote_set_active != null) {
                 channel.trySend(RemoteMessage(remote_set_active = RemoteSetActive(active = 622)))
                 break
@@ -268,10 +284,11 @@ class RemoteSession(
         }
     }
 
-    /** Runs for the life of the connection: answers pings immediately, tracks volume, records nothing else. */
-    private suspend fun readLoop(connection: TlsConnection, channel: Channel<RemoteMessage>) {
+    /** Runs for the life of the connection: answers pings immediately, tracks volume and power, records nothing else. */
+    private suspend fun readLoop(connection: TlsConnection, channel: Channel<RemoteMessage>, myGeneration: Int) {
         while (true) {
             val msg = RemoteMessage.ADAPTER.decode(connection.readFrame())
+            recordPower(msg, myGeneration)
             msg.remote_ping_request?.let { ping ->
                 channel.trySend(RemoteMessage(remote_ping_response = RemotePingResponse(val1 = ping.val1)))
             }

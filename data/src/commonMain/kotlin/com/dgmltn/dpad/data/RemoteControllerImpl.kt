@@ -3,12 +3,14 @@ package com.dgmltn.dpad.data
 import com.dgmltn.dpad.data.mapping.charToKeyCodes
 import com.dgmltn.dpad.data.mapping.toDomain
 import com.dgmltn.dpad.data.mapping.toKeyCode
+import com.dgmltn.dpad.data.mapping.toTvPower
 import com.dgmltn.dpad.data.resolve.resolveHostForAttempt
 import com.dgmltn.dpad.domain.*
 import com.dgmltn.dpad.protocol.session.RemoteSession
 import com.dgmltn.dpad.protocol.transport.TlsSocketFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -25,6 +27,13 @@ class RemoteControllerImpl(
     override val connection: StateFlow<ConnectionState> = _connection.asStateFlow()
     private val _volume = MutableStateFlow<Volume?>(null)
     override val volume: StateFlow<Volume?> = _volume.asStateFlow()
+    private val _power = MutableStateFlow<TvPower?>(null)
+    override val power: StateFlow<TvPower?> = _power.asStateFlow()
+
+    // DROP_OLDEST + 1 slot: tryEmit never fails and never suspends a UI-thread caller; a burst
+    // collapsing to one emission is fine for "was there activity".
+    private val _interactions = MutableSharedFlow<Unit>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    override val interactions: SharedFlow<Unit> = _interactions.asSharedFlow()
 
     private var session: RemoteSession? = null
 
@@ -42,8 +51,15 @@ class RemoteControllerImpl(
     // RemoteSession and collectors (leaked connection, flickering _connection/_volume).
     private var connectJob: Job? = null
 
+    // The device the current connect() targets; cleared only by disconnect(). Keyed on this rather
+    // than on _connection because the state is still Disconnected while connect()'s launch is
+    // suspended before building its session — a repeat connect() in that window must be a no-op too.
+    private var currentDevice: PairedDevice? = null
+
     override fun connect(device: PairedDevice) {
+        if (isAlreadyTargeting(currentDevice, device, _connection.value)) return
         disconnect()
+        currentDevice = device
         connectJob = scope.launch {
             val identity = identityStore.protocolIdentity()
             // Attempt 0 uses the stored IP immediately (instant reconnect when the TV kept its
@@ -63,6 +79,7 @@ class RemoteControllerImpl(
             collectorJobs = listOf(
                 scope.launch { s.state.collect { _connection.value = it.toDomain() } },
                 scope.launch { s.volume.collect { _volume.value = it?.toDomain() } },
+                scope.launch { s.power.collect { _power.value = it.toTvPower() } },
             )
             s.connect()
         }
@@ -78,11 +95,27 @@ class RemoteControllerImpl(
         session?.disconnect(); session = null
         _connection.value = ConnectionState.Disconnected
         _volume.value = null
+        _power.value = null
+        currentDevice = null
     }
 
-    override fun press(key: RemoteKey) { session?.sendKey(key.toKeyCode()) }
-    override fun launchApp(appLinkUrl: String) { session?.launchApp(appLinkUrl) }
+    override fun press(key: RemoteKey) {
+        _interactions.tryEmit(Unit)
+        session?.sendKey(key.toKeyCode())
+    }
+    override fun launchApp(appLinkUrl: String) {
+        _interactions.tryEmit(Unit)
+        session?.launchApp(appLinkUrl)
+    }
     override fun sendText(text: String) {
+        _interactions.tryEmit(Unit)
         text.forEach { ch -> charToKeyCodes(ch).forEach { session?.sendKey(it) } }
     }
 }
+
+/**
+ * True when [connect][RemoteControllerImpl.connect] for [requested] should be a no-op: it's the
+ * exact device already being targeted and the session hasn't given up for a re-pair.
+ */
+internal fun isAlreadyTargeting(current: PairedDevice?, requested: PairedDevice, state: ConnectionState): Boolean =
+    current == requested && state != ConnectionState.PairingRequired

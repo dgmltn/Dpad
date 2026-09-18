@@ -52,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.dgmltn.dpad.design.DirectionalPad
 import com.dgmltn.dpad.design.DpadDirection
 import com.dgmltn.dpad.design.DpadTheme
@@ -60,6 +61,7 @@ import com.dgmltn.dpad.design.ShortcutChip
 import com.dgmltn.dpad.domain.ConnectionState
 import com.dgmltn.dpad.domain.RemoteKey
 import com.dgmltn.dpad.domain.Shortcut
+import com.dgmltn.dpad.domain.TvPower
 import com.dgmltn.dpad.domain.Volume
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -73,6 +75,12 @@ fun RemoteScreen(
     vm: RemoteViewModel = koinViewModel(),
 ) {
     val state by vm.state.collectAsState()
+
+    LifecycleStartEffect(vm) {
+        vm.onConnectLastUsed()
+        onStopOrDispose { }
+    }
+
     RemoteContent(
         state = state,
         onKey = vm::onKey,
@@ -105,17 +113,18 @@ fun RemoteContent(
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing),
         ) {
+            val tvOff = state.connection == ConnectionState.Connected && state.power == TvPower.OFF
+
             TopBar(
                 deviceName = state.deviceName,
                 connection = state.connection,
+                tvOff = tvOff,
                 onDeviceNameClick = onOpenDevices,
                 onKeyboardClick = { showTextSheet = true },
                 onPowerClick = { onKey(RemoteKey.POWER) },
             )
 
-            if (state.connection != ConnectionState.Connected) {
-                ConnectionBanner(connection = state.connection)
-            }
+            statusBannerText(state.connection, tvOff)?.let { StatusBanner(text = it) }
 
             Column(
                 modifier = Modifier
@@ -219,6 +228,7 @@ fun RemoteContent(
 private fun TopBar(
     deviceName: String?,
     connection: ConnectionState,
+    tvOff: Boolean,
     onDeviceNameClick: () -> Unit,
     onKeyboardClick: () -> Unit,
     onPowerClick: () -> Unit,
@@ -240,7 +250,7 @@ private fun TopBar(
             Box(
                 modifier = Modifier
                     .size(10.dp)
-                    .background(color = connectionDotColor(connection), shape = CircleShape),
+                    .background(color = connectionDotColor(connection, tvOff), shape = CircleShape),
             )
             Text(
                 text = deviceName ?: "No device",
@@ -260,30 +270,33 @@ private fun TopBar(
             }
             RemoteIconButton(
                 icon = Icons.Filled.PowerSettingsNew,
-                contentDescription = "Power",
+                contentDescription = if (tvOff) "Turn TV on" else "Power",
                 onClick = onPowerClick,
-                tint = MaterialTheme.colorScheme.error,
+                tint = if (tvOff) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.error,
+                containerColor = if (tvOff) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
             )
         }
     }
 }
 
 @Composable
-private fun connectionDotColor(connection: ConnectionState): Color = when (connection) {
-    ConnectionState.Connected -> Color(0xFF4CAF50)
-    ConnectionState.Connecting -> Color(0xFFFFC107)
-    ConnectionState.PairingRequired -> MaterialTheme.colorScheme.error
-    ConnectionState.Disconnected -> MaterialTheme.colorScheme.onSurfaceVariant
+private fun connectionDotColor(connection: ConnectionState, tvOff: Boolean): Color = when {
+    tvOff -> MaterialTheme.colorScheme.outline
+    connection == ConnectionState.Connected -> Color(0xFF4CAF50)
+    connection == ConnectionState.Connecting -> Color(0xFFFFC107)
+    connection == ConnectionState.PairingRequired -> MaterialTheme.colorScheme.error
+    else -> MaterialTheme.colorScheme.onSurfaceVariant
+}
+
+private fun statusBannerText(connection: ConnectionState, tvOff: Boolean): String? = when (connection) {
+    ConnectionState.Connecting -> "Connecting…"
+    ConnectionState.Disconnected -> "Disconnected"
+    ConnectionState.PairingRequired -> "Re-pair needed"
+    ConnectionState.Connected -> if (tvOff) "TV is off" else null
 }
 
 @Composable
-private fun ConnectionBanner(connection: ConnectionState) {
-    val text = when (connection) {
-        ConnectionState.Connecting -> "Connecting…"
-        ConnectionState.Disconnected -> "Disconnected"
-        ConnectionState.PairingRequired -> "Re-pair needed"
-        ConnectionState.Connected -> return
-    }
+private fun StatusBanner(text: String) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surfaceVariant,
@@ -408,6 +421,27 @@ private fun Preview_RemoteContent_Connected() {
                     Shortcut(id = "youtube", label = "YouTube", appLinkUrl = "https://youtube.com"),
                     Shortcut(id = "disney", label = "Disney+", appLinkUrl = "https://disneyplus.com"),
                 ),
+            ),
+            onKey = {},
+            onLaunch = {},
+            onText = {},
+            onOpenDevices = {},
+            onEditShortcuts = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun Preview_RemoteContent_TvOff() {
+    DpadTheme {
+        RemoteContent(
+            state = RemoteUiState(
+                deviceName = "Living Room TV",
+                connection = ConnectionState.Connected,
+                power = TvPower.OFF,
+                volume = null,
+                shortcuts = persistentListOf(),
             ),
             onKey = {},
             onLaunch = {},

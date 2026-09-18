@@ -8,18 +8,25 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import okio.Path.Companion.toPath
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
+import platform.Foundation.NSNotificationCenter
+import platform.Foundation.NSOperationQueue
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
+import platform.UIKit.UIApplicationDidBecomeActiveNotification
+import platform.UIKit.UIApplicationDidEnterBackgroundNotification
 
 /**
- * Provides the three platform singletons `:data`'s `dataModule` requires on iOS: the Preferences
+ * Provides the four platform singletons `:data`'s `dataModule` requires on iOS: the Preferences
  * DataStore (backed by a file in the app's Documents directory), the Bonjour-backed [MdnsBrowser],
- * and the shared session scope.
+ * the shared session scope, and the app-in-foreground signal.
  *
  * The session scope is BOTH single-threaded-confined (`Dispatchers.Main`, which on Kotlin/Native is
  * confined to the main queue and backs RemoteSession's generation guard in `:data`) AND a
@@ -38,4 +45,17 @@ val iosPlatformModule = module {
     }
     single { MdnsBrowser() }
     single<CoroutineScope>(named("session")) { CoroutineScope(SupervisorJob() + Dispatchers.Main) }
+    // Starts true: Koin starts from DpadApp.init while the app is launching into the foreground.
+    // Observers live as long as the process (this is a singleton), so they're never removed.
+    single<StateFlow<Boolean>>(named("appInForeground")) {
+        val state = MutableStateFlow(true)
+        val center = NSNotificationCenter.defaultCenter
+        center.addObserverForName(UIApplicationDidBecomeActiveNotification, null, NSOperationQueue.mainQueue) { _ ->
+            state.value = true
+        }
+        center.addObserverForName(UIApplicationDidEnterBackgroundNotification, null, NSOperationQueue.mainQueue) { _ ->
+            state.value = false
+        }
+        state.asStateFlow()
+    }
 }

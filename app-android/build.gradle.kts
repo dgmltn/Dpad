@@ -54,12 +54,14 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":protocol"))
 
+    implementation(libs.androidx.core)
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.datastore.preferences.core)
     implementation(libs.okio)
 

@@ -49,6 +49,7 @@ import remote.RemoteMessage
 import remote.RemotePingRequest
 import remote.RemoteSetActive
 import remote.RemoteSetVolumeLevel
+import remote.RemoteStart
 
 /**
  * TLS-level test harness for a fake Android TV pairing/session server. This task only wires up
@@ -260,6 +261,13 @@ class FakeTvServer(private val requireClientCert: Boolean) : AutoCloseable {
     private val keyInjects = Channel<RemoteKeyCode>(Channel.UNLIMITED)
 
     /**
+     * When non-null, the session peer sends `remote_start(started = this)` between receiving the
+     * client's `remote_configure` reply and sending `remote_set_active` — i.e. mid-handshake, where
+     * the client's handshake loop has to cope with an unexpected message.
+     */
+    @Volatile var remoteStartDuringHandshake: Boolean? = null
+
+    /**
      * Scripted session peer (Task 8): drives the post-pairing handshake the real client expects —
      * server sends remote_configure, awaits the client's own remote_configure reply, sends
      * remote_set_active, awaits the client's reply — then reads whatever the client sends
@@ -293,6 +301,10 @@ class FakeTvServer(private val requireClientCert: Boolean) : AutoCloseable {
                 val configureReply = RemoteMessage.ADAPTER.decode(pipe.readFrame())
                 check(configureReply.remote_configure != null) { "expected remote_configure reply, got $configureReply" }
                 receivedMessages += configureReply
+
+                remoteStartDuringHandshake?.let { started ->
+                    writeMessage(pipe, RemoteMessage(remote_start = RemoteStart(started = started)))
+                }
 
                 writeMessage(pipe, RemoteMessage(remote_set_active = RemoteSetActive(active = 622)))
                 val setActiveReply = RemoteMessage.ADAPTER.decode(pipe.readFrame())
@@ -328,6 +340,12 @@ class FakeTvServer(private val requireClientCert: Boolean) : AutoCloseable {
                 remote_set_volume_level = RemoteSetVolumeLevel(volume_level = level, volume_max = max, volume_muted = muted),
             ),
         )
+    }
+
+    /** Writes a `remote_start(started)` (TV power report) on the current session connection. */
+    suspend fun sendRemoteStart(started: Boolean) {
+        val pipe = currentPipe ?: error("FakeTvServer.sendRemoteStart: no active session connection")
+        writeMessage(pipe, RemoteMessage(remote_start = RemoteStart(started = started)))
     }
 
     /** Force-closes the current session connection, simulating a dropped connection mid-session. */
