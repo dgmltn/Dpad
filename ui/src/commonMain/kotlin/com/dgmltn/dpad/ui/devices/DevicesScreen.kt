@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dgmltn.dpad.design.DpadIcon
-import com.dgmltn.dpad.design.DpadTheme
+import com.dgmltn.dpad.design.DpadPreview
 import com.dgmltn.dpad.domain.DiscoveredDevice
 import com.dgmltn.dpad.domain.PairedDevice
 import com.dgmltn.dpad.domain.PairingFailureReason
@@ -279,7 +279,7 @@ private fun DiscoveredDeviceRow(
 @Preview
 @Composable
 private fun Preview_DevicesContent_Empty() {
-    DpadTheme {
+    DpadPreview {
         DevicesContent(
             state = DevicesUiState(),
             onSelect = {},
@@ -295,7 +295,7 @@ private fun Preview_DevicesContent_Empty() {
 @Preview
 @Composable
 private fun Preview_DevicesContent_WithPairedAndDiscovered() {
-    DpadTheme {
+    DpadPreview {
         DevicesContent(
             state = DevicesUiState(
                 paired = persistentListOf(
@@ -320,7 +320,7 @@ private fun Preview_DevicesContent_WithPairedAndDiscovered() {
 @Preview
 @Composable
 private fun Preview_DeviceRow() {
-    DpadTheme {
+    DpadPreview {
         DeviceRow(
             name = "Living Room TV",
             host = "192.168.1.10",
@@ -334,7 +334,7 @@ private fun Preview_DeviceRow() {
 @Preview
 @Composable
 private fun Preview_DevicesContent_PairingFailed() {
-    DpadTheme {
+    DpadPreview {
         DevicesContent(
             state = DevicesUiState(
                 paired = persistentListOf(

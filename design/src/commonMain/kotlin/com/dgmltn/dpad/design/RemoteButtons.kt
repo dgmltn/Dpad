@@ -72,7 +72,7 @@ fun ShortcutChip(
 @Preview
 @Composable
 private fun Preview_RemoteIconButton() {
-    DpadTheme {
+    DpadPreview {
         RemoteIconButton(
             icon = DpadIcon.Home,
             contentDescription = "Home",
@@ -84,7 +84,7 @@ private fun Preview_RemoteIconButton() {
 @Preview
 @Composable
 private fun Preview_RemoteIconButton_Tinted() {
-    DpadTheme {
+    DpadPreview {
         RemoteIconButton(
             icon = DpadIcon.Power,
             contentDescription = "Power",
@@ -97,7 +97,7 @@ private fun Preview_RemoteIconButton_Tinted() {
 @Preview
 @Composable
 private fun Preview_ShortcutChip() {
-    DpadTheme {
+    DpadPreview {
         ShortcutChip(label = "Netflix", onClick = {})
     }
 }
@@ -105,7 +105,7 @@ private fun Preview_ShortcutChip() {
 @Preview
 @Composable
 private fun Preview_ShortcutChip_LongLabel() {
-    DpadTheme {
+    DpadPreview {
         ShortcutChip(label = "Paramount+", onClick = {})
     }
 }

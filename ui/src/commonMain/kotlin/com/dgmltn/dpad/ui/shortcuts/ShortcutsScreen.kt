@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dgmltn.dpad.design.DpadIcon
-import com.dgmltn.dpad.design.DpadTheme
+import com.dgmltn.dpad.design.DpadPreview
 import com.dgmltn.dpad.domain.CatalogApp
 import com.dgmltn.dpad.domain.Shortcut
 import kotlinx.collections.immutable.persistentListOf
@@ -329,7 +329,7 @@ private fun AddCustomShortcutDialog(
 @Preview
 @Composable
 private fun Preview_ShortcutsContent_Empty() {
-    DpadTheme {
+    DpadPreview {
         ShortcutsContent(
             state = ShortcutsUiState(
                 shortcuts = persistentListOf(),
@@ -350,7 +350,7 @@ private fun Preview_ShortcutsContent_Empty() {
 @Preview
 @Composable
 private fun Preview_ShortcutsContent_Populated() {
-    DpadTheme {
+    DpadPreview {
         ShortcutsContent(
             state = ShortcutsUiState(
                 shortcuts = persistentListOf(
@@ -375,7 +375,7 @@ private fun Preview_ShortcutsContent_Populated() {
 @Preview
 @Composable
 private fun Preview_ShortcutEditRow() {
-    DpadTheme {
+    DpadPreview {
         ShortcutEditRow(
             label = "Netflix",
             canMoveUp = false,
@@ -390,7 +390,7 @@ private fun Preview_ShortcutEditRow() {
 @Preview
 @Composable
 private fun Preview_CatalogAppRow() {
-    DpadTheme {
+    DpadPreview {
         CatalogAppRow(label = "Disney+", onClick = {})
     }
 }

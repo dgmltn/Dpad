@@ -1,10 +1,17 @@
 package com.dgmltn.dpad.design
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 // A dark, high-contrast palette so the remote reads as hardware: a near-black background,
 // a lighter surface for the physical pad, and a single accent for the center/pressed state.
@@ -43,4 +50,16 @@ fun DpadTheme(content: @Composable () -> Unit) {
         typography = DpadTypography,
         content = content,
     )
+}
+
+@Composable
+fun DpadPreview(
+    padding: Dp = 16.dp,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    DpadTheme {
+        Surface {
+            Box(modifier = Modifier.padding(padding), content = content)
+        }
+    }
 }

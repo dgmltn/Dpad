@@ -105,7 +105,7 @@ private val EdgeInset = 12.dp
 @Preview
 @Composable
 private fun Preview_DirectionalPad() {
-    DpadTheme {
+    DpadPreview {
         DirectionalPad(onDirection = {}, onCenter = {})
     }
 }

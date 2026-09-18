@@ -42,7 +42,7 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import com.dgmltn.dpad.design.DirectionalPad
 import com.dgmltn.dpad.design.DpadDirection
 import com.dgmltn.dpad.design.DpadIcon
-import com.dgmltn.dpad.design.DpadTheme
+import com.dgmltn.dpad.design.DpadPreview
 import com.dgmltn.dpad.design.RemoteIconButton
 import com.dgmltn.dpad.design.ShortcutChip
 import com.dgmltn.dpad.domain.ConnectionState
@@ -377,7 +377,7 @@ private fun DpadDirection.toRemoteKey(): RemoteKey = when (this) {
 @Preview
 @Composable
 private fun Preview_RemoteContent_Disconnected() {
-    DpadTheme {
+    DpadPreview {
         RemoteContent(
             state = RemoteUiState(
                 deviceName = null,
@@ -397,7 +397,7 @@ private fun Preview_RemoteContent_Disconnected() {
 @Preview
 @Composable
 private fun Preview_RemoteContent_Connected() {
-    DpadTheme {
+    DpadPreview {
         RemoteContent(
             state = RemoteUiState(
                 deviceName = "Living Room TV",
@@ -421,7 +421,7 @@ private fun Preview_RemoteContent_Connected() {
 @Preview
 @Composable
 private fun Preview_RemoteContent_TvOff() {
-    DpadTheme {
+    DpadPreview {
         RemoteContent(
             state = RemoteUiState(
                 deviceName = "Living Room TV",
@@ -442,7 +442,7 @@ private fun Preview_RemoteContent_TvOff() {
 @Preview
 @Composable
 private fun Preview_RemoteContent_PairingRequired() {
-    DpadTheme {
+    DpadPreview {
         RemoteContent(
             state = RemoteUiState(
                 deviceName = "Bedroom TV",

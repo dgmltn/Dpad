@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dgmltn.dpad.design.DpadIcon
-import com.dgmltn.dpad.design.DpadTheme
+import com.dgmltn.dpad.design.DpadPreview
 import com.dgmltn.dpad.domain.PairingFailureReason
 import com.dgmltn.dpad.domain.PairingProgress
 
@@ -150,7 +150,7 @@ private fun PairingFailureReason.toMessage(): String = when (this) {
 @Preview
 @Composable
 private fun Preview_PairingSheet_Connecting() {
-    DpadTheme {
+    DpadPreview {
         PairingSheet(
             pairing = PairingProgress.Connecting,
             onSubmitCode = {},
@@ -162,7 +162,7 @@ private fun Preview_PairingSheet_Connecting() {
 @Preview
 @Composable
 private fun Preview_PairingSheet_AwaitingCode() {
-    DpadTheme {
+    DpadPreview {
         PairingSheet(
             pairing = PairingProgress.AwaitingCode,
             onSubmitCode = {},
@@ -174,7 +174,7 @@ private fun Preview_PairingSheet_AwaitingCode() {
 @Preview
 @Composable
 private fun Preview_PairingSheet_Paired() {
-    DpadTheme {
+    DpadPreview {
         PairingSheet(
             pairing = PairingProgress.Paired,
             onSubmitCode = {},
@@ -186,7 +186,7 @@ private fun Preview_PairingSheet_Paired() {
 @Preview
 @Composable
 private fun Preview_PairingSheet_Failed() {
-    DpadTheme {
+    DpadPreview {
         PairingSheet(
             pairing = PairingProgress.Failed(PairingFailureReason.WRONG_CODE),
             onSubmitCode = {},
