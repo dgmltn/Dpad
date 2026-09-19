@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dgmltn.dpad.design.DpadIcon
+import com.dgmltn.dpad.icon.DpadIcon
 import com.dgmltn.dpad.design.DpadPreview
 import com.dgmltn.dpad.domain.DiscoveredDevice
 import com.dgmltn.dpad.domain.PairedDevice

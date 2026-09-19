@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.dgmltn.dpad.design.DirectionalPad
 import com.dgmltn.dpad.design.DpadDirection
-import com.dgmltn.dpad.design.DpadIcon
+import com.dgmltn.dpad.icon.DpadIcon
 import com.dgmltn.dpad.design.DpadPreview
 import com.dgmltn.dpad.design.RemoteIconButton
 import com.dgmltn.dpad.design.ShortcutChip
@@ -153,7 +153,7 @@ fun RemoteContent(
                         repeat = true,
                     )
                     RemoteIconButton(
-                        icon = if (state.volume?.muted == true) DpadIcon.VolumeOff else DpadIcon.VolumeUp,
+                        icon = if (state.volume?.muted == true) DpadIcon.VolumeMute else DpadIcon.VolumeUp,
                         contentDescription = if (state.volume?.muted == true) "Unmute" else "Mute",
                         onClick = { onKey(RemoteKey.MUTE) },
                     )

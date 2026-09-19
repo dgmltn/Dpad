@@ -1,4 +1,4 @@
-package com.dgmltn.dpad.design
+package com.dgmltn.dpad.icon
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,26 +6,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.automirrored.filled.VolumeDown
-import androidx.compose.material.icons.automirrored.filled.VolumeOff
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FastForward
-import androidx.compose.material.icons.filled.FastRewind
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Keyboard
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.PowerSettingsNew
-import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -40,35 +21,57 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dgmltn.dpad.design.DpadPreview
+import com.dgmltn.dpad.icon.fluent.Add24Filled
+import com.dgmltn.dpad.icon.fluent.ArrowLeft24Filled
+import com.dgmltn.dpad.icon.fluent.Checkmark24Filled
+import com.dgmltn.dpad.icon.fluent.ChevronDown24Filled
+import com.dgmltn.dpad.icon.fluent.ChevronLeft24Filled
+import com.dgmltn.dpad.icon.fluent.ChevronRight24Filled
+import com.dgmltn.dpad.icon.fluent.ChevronUp24Filled
+import com.dgmltn.dpad.icon.fluent.Delete24Filled
+import com.dgmltn.dpad.icon.fluent.FastForward24Filled
+import com.dgmltn.dpad.icon.fluent.Fluent
+import com.dgmltn.dpad.icon.fluent.FluentEdit24Filled
+import com.dgmltn.dpad.icon.fluent.Home24Filled
+import com.dgmltn.dpad.icon.fluent.Keyboard24Filled
+import com.dgmltn.dpad.icon.fluent.Play24Filled
+import com.dgmltn.dpad.icon.fluent.Power24Filled
+import com.dgmltn.dpad.icon.fluent.Rewind24Filled
+import com.dgmltn.dpad.icon.fluent.Send24Filled
+import com.dgmltn.dpad.icon.fluent.Speaker124Filled
+import com.dgmltn.dpad.icon.fluent.Speaker224Filled
+import com.dgmltn.dpad.icon.fluent.SpeakerMute24Filled
+import com.dgmltn.dpad.icon.fluent.Tv24Filled
 
 /**
  * Single source of truth for every icon in the app. Each entry is backed by a Material
- * [ImageVector] and resolves to a [Painter], so callers never touch `Icons.*` directly — restyling
+ * [androidx.compose.ui.graphics.vector.ImageVector] and resolves to a [androidx.compose.ui.graphics.painter.Painter], so callers never touch `Icons.*` directly — restyling
  * the app's icons means editing this file only.
  *
- * Render inline with the [DpadIcon] composable, or grab [painter] when an API wants a [Painter].
+ * Render inline with the [DpadIcon] composable, or grab [painter] when an API wants a [androidx.compose.ui.graphics.painter.Painter].
  */
 enum class DpadIcon(private val vector: ImageVector) {
-    Add(Icons.Filled.Add),
-    Back(Icons.AutoMirrored.Filled.ArrowBack),
-    Check(Icons.Filled.Check),
-    ChevronDown(Icons.Filled.KeyboardArrowDown),
-    ChevronLeft(Icons.AutoMirrored.Filled.KeyboardArrowLeft),
-    ChevronRight(Icons.AutoMirrored.Filled.KeyboardArrowRight),
-    ChevronUp(Icons.Filled.KeyboardArrowUp),
-    Delete(Icons.Filled.Delete),
-    Edit(Icons.Filled.Edit),
-    FastForward(Icons.Filled.FastForward),
-    Home(Icons.Filled.Home),
-    Keyboard(Icons.Filled.Keyboard),
-    Play(Icons.Filled.PlayArrow),
-    Power(Icons.Filled.PowerSettingsNew),
-    Rewind(Icons.Filled.FastRewind),
-    Send(Icons.AutoMirrored.Filled.Send),
-    Tv(Icons.Filled.Tv),
-    VolumeDown(Icons.AutoMirrored.Filled.VolumeDown),
-    VolumeOff(Icons.AutoMirrored.Filled.VolumeOff),
-    VolumeUp(Icons.AutoMirrored.Filled.VolumeUp),
+    Add(Fluent.Add24Filled),
+    Back(Fluent.ArrowLeft24Filled),
+    Check(Fluent.Checkmark24Filled),
+    ChevronDown(Fluent.ChevronDown24Filled),
+    ChevronLeft(Fluent.ChevronLeft24Filled),
+    ChevronRight(Fluent.ChevronRight24Filled),
+    ChevronUp(Fluent.ChevronUp24Filled),
+    Delete(Fluent.Delete24Filled),
+    Edit(Fluent.FluentEdit24Filled),
+    FastForward(Fluent.FastForward24Filled),
+    Home(Fluent.Home24Filled),
+    Keyboard(Fluent.Keyboard24Filled),
+    Play(Fluent.Play24Filled),
+    Power(Fluent.Power24Filled),
+    Rewind(Fluent.Rewind24Filled),
+    Send(Fluent.Send24Filled),
+    Tv(Fluent.Tv24Filled),
+    VolumeDown(Fluent.Speaker124Filled),
+    VolumeMute(Fluent.SpeakerMute24Filled),
+    VolumeUp(Fluent.Speaker224Filled),
     ;
 
     val painter: Painter
@@ -76,7 +79,7 @@ enum class DpadIcon(private val vector: ImageVector) {
 
     @Composable
     operator fun invoke(
-        modifier: Modifier = Modifier,
+        modifier: Modifier = Modifier.Companion,
         contentDescription: String? = null,
         tint: Color = LocalContentColor.current,
     ) {
@@ -84,12 +87,12 @@ enum class DpadIcon(private val vector: ImageVector) {
     }
 }
 
-/** Renders a [DpadIcon] via Material 3 [Icon]. */
+/** Renders a [DpadIcon] via Material 3 [androidx.compose.material3.Icon]. */
 @Composable
 fun DpadIcon(
     icon: DpadIcon,
     contentDescription: String?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     tint: Color = LocalContentColor.current,
 ) {
     Icon(
