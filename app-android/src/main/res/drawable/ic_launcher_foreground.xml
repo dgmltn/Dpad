@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pads the ic_launcher glyph into the adaptive-icon safe zone (inner 66dp circle of the 108dp
+     layer) and the splash-screen icon circle (inner 192dp of the 288dp canvas). Fractional insets
+     scale with whatever bounds the system draws this into. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_launcher"
+    android:inset="25%" />
